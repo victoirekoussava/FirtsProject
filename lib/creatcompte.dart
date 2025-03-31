@@ -9,7 +9,17 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Création du compte'),
+        title: Container(
+          decoration: BoxDecoration(
+            color: Colors.pink[200],
+            borderRadius: BorderRadius.circular(20.0), // Bordures arrondies
+          ),
+          padding: EdgeInsets.all(18.0),
+          child: Text(
+            'Création du compte',
+            style: TextStyle(color: Colors.white,fontSize: 25, fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -19,6 +29,8 @@ class MyHomePage extends StatelessWidget {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Nom',
+                  labelStyle: TextStyle(
+                      color: Colors.pink[300],fontWeight: FontWeight.bold,fontSize: 20),
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -32,6 +44,8 @@ class MyHomePage extends StatelessWidget {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Prénom',
+                  labelStyle: TextStyle(
+                      color: Colors.pink[300],fontWeight: FontWeight.bold,fontSize: 20),
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -46,6 +60,8 @@ class MyHomePage extends StatelessWidget {
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Numéro de téléphone',
+                  labelStyle: TextStyle(
+                      color: Colors.pink[300],fontWeight: FontWeight.bold,fontSize: 20),
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -167,7 +183,7 @@ class _MyLoginState extends State<MyLogin> {
                 MaterialPageRoute(builder: (context) => Booking()),
               );
             },
-            child: Text('créer'),
+            child: Text('créer',style: TextStyle(color: Colors.pink[200],fontWeight: FontWeight.bold,backgroundColor: Colors.blue[100]),),
           ),
         ],
       ),

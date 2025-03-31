@@ -12,10 +12,13 @@ class Service extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, size: 40, color: Colors.purpleAccent), // Icône
-      title: Text(serviceName, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      subtitle: Text(price, style: TextStyle(fontSize: 16, color: Colors.green)),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2),
+      child: ListTile(
+        leading: Icon(icon, size: 40, color: Colors.purpleAccent), // Icône
+        title: Text(serviceName, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        subtitle: Text(price, style: TextStyle(fontSize: 16, color: Colors.green)),
+      ),
     );
   }
 }

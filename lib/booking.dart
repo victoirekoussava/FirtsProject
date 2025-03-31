@@ -12,17 +12,14 @@ class Booking extends StatefulWidget {
 class _BookingState extends State<Booking> {
   final TextEditingController _dateController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  final TextEditingController prenomController = TextEditingController();
+  final TextEditingController numberController = TextEditingController();
+  final TextEditingController serviceController = TextEditingController();
 
   List<DropdownMenuItem<String>> listservices = [];
-  String? selectedService;
+  String? selectedService = 'coloration';
   List<Map<String, String>> appointments = [];
-  late String nameController;
-  List<String> users=[];
-
-  get validatedUsers => null;
-
-
-
+  List<Map<String, String>> users = [];
 
   @override
   void initState() {
@@ -71,21 +68,19 @@ class _BookingState extends State<Booking> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Container(
-        decoration: BoxDecoration(
-          color: Colors.pink[200],
-          borderRadius: BorderRadius.circular(20.0), // Bordures arrondies
-        ),
-          padding: EdgeInsets.all(18.0),
-          child: Text(
+          decoration: BoxDecoration(
+            color: Colors.pink[200],
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          padding: const EdgeInsets.all(18.0),
+          child: const Text(
             'Prendre un rendez-vous',
-            style: TextStyle(color: Colors.white,fontSize: 25, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -97,25 +92,39 @@ class _BookingState extends State<Booking> {
             children: [
               DropdownButtonFormField<String>(
                 value: selectedService,
-                decoration: InputDecoration(labelText: 'Choisir un service',labelStyle: TextStyle(
-                  color: Colors.pinkAccent,fontWeight: FontWeight.bold,fontSize: 20),
-                  border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                    labelText: 'Choisir un service',
+                    labelStyle: TextStyle(
+                        color: Colors.pinkAccent,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20
+                    ),
+                    border: OutlineInputBorder()
+                ),
                 items: listservices,
                 onChanged: (value) {
-                  setState(() {
-                    selectedService = value!;
-                  });
+                  if (value != null) {
+                    setState(() {
+                      selectedService = value;
+                    });
+                  }
                 },
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Veuillez choisir un service'
+                    : null,
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
                 controller: _dateController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Date',
                   hintText: 'DD/MM/YYYY',
                   labelStyle: TextStyle(
-                    color: Colors.pinkAccent,fontWeight: FontWeight.bold,fontSize: 20),
-                    suffixIcon: Icon(Icons.calendar_today),
+                      color: Colors.pinkAccent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
+                  ),
+                  suffixIcon: Icon(Icons.calendar_today),
                   border: OutlineInputBorder(),
                 ),
                 readOnly: true,
@@ -125,11 +134,16 @@ class _BookingState extends State<Booking> {
                     ? 'Veuillez entrer une date'
                     : null,
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Prénom',labelStyle: TextStyle(
-                  color: Colors.pinkAccent,fontWeight: FontWeight.bold,fontSize: 20),
+                controller: prenomController,
+                decoration: const InputDecoration(
+                  labelText: 'Prénom',
+                  labelStyle: TextStyle(
+                      color: Colors.pinkAccent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
+                  ),
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) {
@@ -139,12 +153,17 @@ class _BookingState extends State<Booking> {
                   return null;
                 },
               ),
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               TextFormField(
+                controller: numberController,
                 decoration: InputDecoration(
-                  labelText: 'Numéro de téléphone',labelStyle: TextStyle(
-                  color: Colors.pink[300],fontWeight: FontWeight.bold,fontSize: 20),
-                  border: OutlineInputBorder(),
+                  labelText: 'Numéro de téléphone',
+                  labelStyle: TextStyle(
+                      color: Colors.pink[300],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
+                  ),
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -153,48 +172,60 @@ class _BookingState extends State<Booking> {
                   return null;
                 },
               ),
-
-
-              SizedBox(height: 30),
+              const SizedBox(height: 25),
               ElevatedButton(
                 onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    // Ajouter une personne à la liste.
-                    validatedUsers.add("Prénom");
+                  if (formKey.currentState != null && formKey.currentState!.validate()) {
+                    // Ajouter une personne à la liste avec les bonnes informations
+                    setState(() {
+                      users.add({
+                        "Prénom": prenomController.text,
+                        "Numéro de téléphonne": numberController.text,
+                        "Service": selectedService ?? '',
+                        "Date": _dateController.text,
+                      });
 
-                    // Afficher un message de confirmation.
+                      // Réinitialiser les champs après soumission
+                      prenomController.clear();
+                      numberController.clear();
+                      _dateController.clear();
+                    });
+
+                    // Afficher un message de confirmation
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text('Rendez-vous réservé avec succès !'),
                       ),
                     );
-
-                    // aller vers la page listepersonnes
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Listusersname(users: users) ,
+                  } else {
+                    // Afficher un message d'erreur
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Veuillez compléter tous les champs correctement'),
                       ),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.pink[200]),
-                child: Text('Valider votre rendez-vous'),
+                child: const Text('Valider votre rendez-vous'),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 20),
+              Expanded(
+                child: Listusersname(users: users),
+              ),
+              const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) =>  MyHomePage()),
+                    MaterialPageRoute(builder: (context) => const MyHomePage()),
                   );
                 },
-
                 style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 45),
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 45),
                     backgroundColor: Colors.pink[200]
                 ),
-                child: Text('Creer un compte'),
+                child: const Text('Creer un compte'),
               ),
             ],
           ),
@@ -203,14 +234,3 @@ class _BookingState extends State<Booking> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
